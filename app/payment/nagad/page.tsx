@@ -1,4 +1,4 @@
-xport default function NagadPage() {
+export default function NagadPage() {
   return (
     <main className="min-h-screen bg-white p-5">
       <h1 className="text-3xl font-bold text-red-600 mb-6">

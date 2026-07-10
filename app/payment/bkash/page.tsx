@@ -33,9 +33,9 @@ export default function BkashPage() {
           placeholder="Enter Transaction ID"
         />
 
-        <button className="w-full bg-pink-600 text-white rounded-xl py-3 font-bold">
-          Verify
-        </button>
+<button className="w-full bg-pink-600 text-white rounded-xl py-3 font-bold">
+  Verify
+</button>
 
       </div>
     </main>

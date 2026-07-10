@@ -13,16 +13,6 @@ export default function Home() {
       link: "/freefire",
     },
     {
-      title: "💰 Add Money",
-      image: "https://via.placeholder.com/300x200",
-      link: "/add-money",
-    },
-    {
-      title: "📦 My Orders",
-      image: "https://via.placeholder.com/300x200",
-      link: "/orders",
-    },
-  ];
 
   return (
     <main className="min-h-screen bg-slate-900 text-white">

@@ -4,12 +4,12 @@ export default function Home() {
 const cards = [
   {
     title: "🔥 Daily Offer",
-    image: "https://via.placeholder.com/300x200",
+    image: "/images/daily-offer.jpg",
     link: "/freefire",
   },
   {
     title: "💎 Top Up",
-    image: "https://via.placeholder.com/300x200",
+    image: "/images/topup.jpg",
     link: "/freefire",
   },
 ];

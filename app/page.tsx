@@ -1,3 +1,4 @@
+import Link from "next/link";
 export default function Home() {
   const games = [
     "🔥 Free Fire",
@@ -33,9 +34,12 @@ export default function Home() {
             className="bg-slate-800 rounded-xl p-5 text-center hover:bg-slate-700"
           >
             <h3 className="font-bold">{game}</h3>
-            <button className="mt-3 bg-blue-600 px-4 py-2 rounded-lg">
-              Order Now
-            </button>
+            <Link
+  href="/freefire"
+  className="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg inline-block"
+>
+  Order Now
+</Link>
           </div>
         ))}
       </section>

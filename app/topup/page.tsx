@@ -1,14 +1,27 @@
 export default function Topup() {
 
   const products = [
-    { name: "25 Diamond", price: "TK 22" },
-    { name: "50 Diamond", price: "TK 37" },
-    { name: "115 Diamond", price: "TK 80" },
-    { name: "240 Diamond", price: "TK 160" },
-    { name: "355 Diamond", price: "TK 240" },
-    { name: "505 Diamond", price: "TK 338" },
-    { name: "725 Diamond", price: "TK 480" },
-    { name: "1090 Diamond", price: "TK 718" },
+{ name: "25 Diamond", price: "TK 22" },
+{ name: "50 Diamond", price: "TK 37" },
+{ name: "115 Diamond", price: "TK 80" },
+{ name: "240 Diamond", price: "TK 160" },
+{ name: "355 Diamond", price: "TK 240" },
+{ name: "505 Diamond", price: "TK 338" },
+{ name: "725 Diamond", price: "TK 480" },
+{ name: "1090 Diamond", price: "TK 718" },
+{ name: "1240 Diamond", price: "TK 802" },
+{ name: "1505 Diamond", price: "TK 980" },
+{ name: "1850 Diamond", price: "TK 1202" },
+{ name: "2090 Diamond", price: "TK 1360" },
+{ name: "2530 Diamond", price: "TK 1612" },
+{ name: "3140 Diamond", price: "TK 2012" },
+{ name: "3770 Diamond", price: "TK 2412" },
+{ name: "4380 Diamond", price: "TK 2812" },
+{ name: "5060 Diamond", price: "TK 3222" },
+{ name: "6300 Diamond", price: "TK 4022" },
+{ name: "7590 Diamond", price: "TK 4832" },
+{ name: "8830 Diamond", price: "TK 5632" },
+{ name: "10120 Diamond", price: "TK 6442" },
   ];
 
   return (

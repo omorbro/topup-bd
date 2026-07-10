@@ -1,17 +1,18 @@
 import Link from "next/link";
 
 export default function Home() {
-  const cards = [
-    {
-      title: "🔥 Daily Offer",
-      image: "https://via.placeholder.com/300x200",
-      link: "/freefire",
-    },
-    {
-      title: "💎 Top Up",
-      image: "https://via.placeholder.com/300x200",
-      link: "/freefire",
-    },
+const cards = [
+  {
+    title: "🔥 Daily Offer",
+    image: "https://via.placeholder.com/300x200",
+    link: "/freefire",
+  },
+  {
+    title: "💎 Top Up",
+    image: "https://via.placeholder.com/300x200",
+    link: "/freefire",
+  },
+];
 
   return (
     <main className="min-h-screen bg-slate-900 text-white">

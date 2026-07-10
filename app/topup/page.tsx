@@ -42,7 +42,19 @@ export default function Topup() {
           </div>
         ))}
       </div>
+<div className="mt-8 bg-slate-800 rounded-xl p-4">
+  <h2 className="text-xl font-bold mb-4">Player ID</h2>
 
+  <input
+    type="text"
+    placeholder="Player ID (UID)"
+    className="w-full p-3 rounded-lg bg-slate-700 text-white border border-slate-600 outline-none"
+  />
+
+  <button className="w-full mt-4 bg-indigo-600 hover:bg-indigo-700 py-3 rounded-lg font-bold">
+    আপনার গেম আইডির নাম চেক করুন
+  </button>
+</div>
     </main>
   );
 }

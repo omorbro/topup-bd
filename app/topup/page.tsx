@@ -72,11 +72,6 @@ export default function Topup() {
     </button>
 
     <button className="bg-white text-black rounded-xl p-4">
-      <p className="font-bold">Rocket</p>
-      <p className="text-sm">Auto Payment</p>
-    </button>
-
-    <button className="bg-white text-black rounded-xl p-4">
       <p className="font-bold">Wallet</p>
       <p className="text-sm">Balance Payment</p>
     </button>

@@ -10,9 +10,13 @@ export default function BkashPage() {
 
         <div className="text-center mb-8">
 
-          <div className="w-24 h-24 mx-auto rounded-full bg-pink-600 flex items-center justify-center text-white text-4xl font-bold shadow-lg">
-            b
-          </div>
+            <div className="w-24 h-24 mx-auto relative">
+  <img
+    src="/images/bkash.jpg"
+    alt="bKash"
+    className="w-full h-full rounded-full object-cover shadow-lg"
+  />
+</div>
           <h1 className="text-4xl font-bold text-pink-600 mt-5">
             bKash Personal
           </h1>

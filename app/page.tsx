@@ -5,12 +5,12 @@ const cards = [
   {
     title: "🔥 Daily Offer",
     image: "/images/daily-offer.jpg",
-    link: "/freefire",
+    link: "/daily-offer",
   },
   {
     title: "💎 Top Up",
     image: "/images/topup.jpg",
-    link: "/freefire",
+    link: "/topup",
   },
 ];
 

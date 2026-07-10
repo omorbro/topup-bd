@@ -24,14 +24,23 @@ export default function Topup() {
 { name: "10120 Diamond", price: "TK 6442" },
   ];
 
-  return (
-    <main className="min-h-screen bg-slate-900 text-white p-4">
+       return (
+  <main className="min-h-screen bg-slate-900 text-white p-4">
 
-      <h1 className="text-3xl font-bold mb-6">
-        💎 UID TOP UP (BD)
-      </h1>
+    <div className="mb-6">
+      <img
+        src="/images/topup.jpg"
+        alt="Topup Banner"
+        className="w-full rounded-xl"
+      />
+    </div>
 
-      <div className="grid grid-cols-2 gap-4">
+    <h1 className="text-3xl font-bold mb-6">
+      💎 UID TOP UP (BD)
+    </h1>
+
+    <div className="grid grid-cols-2 gap-4">
+
         {products.map((item) => (
           <div
             key={item.name}

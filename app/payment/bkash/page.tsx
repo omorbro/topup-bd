@@ -1,3 +1,5 @@
+"use client";
+
 export default function BkashPage() {
   const number = "01890584909";
 

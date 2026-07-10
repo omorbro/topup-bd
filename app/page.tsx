@@ -70,7 +70,7 @@ const cards = [
               <img
                 src={card.image}
                 alt={card.title}
-                className="w-full h-36 object-cover"
+                className="w-full h-44 object-cover"
               />
 
               <div className="p-3 text-center font-bold">

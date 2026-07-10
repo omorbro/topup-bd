@@ -1,48 +1,166 @@
 import Link from "next/link";
+
 export default function Home() {
-  const games = [
-    "🔥 Free Fire",
-    "⚔️ PUBG Mobile",
-    "🎮 Mobile Legends",
-    "💎 Free Fire MAX",
+  const cards = [
+    {
+      title: "🔥 Daily Offer",
+      image: "https://via.placeholder.com/300x200",
+      link: "/freefire",
+    },
+    {
+      title: "💎 Top Up",
+      image: "https://via.placeholder.com/300x200",
+      link: "/freefire",
+    },
+    {
+      title: "💰 Add Money",
+      image: "https://via.placeholder.com/300x200",
+      link: "/add-money",
+    },
+    {
+      title: "📦 My Orders",
+      image: "https://via.placeholder.com/300x200",
+      link: "/orders",
+    },
   ];
 
   return (
     <main className="min-h-screen bg-slate-900 text-white">
-      <header className="bg-blue-700 p-4 text-center">
-        <h1 className="text-3xl font-bold text-yellow-300">TOPUP BD</h1>
-        <p>বাংলাদেশের বিশ্বস্ত গেম টপ-আপ</p>
+
+      {/* Header */}
+      <header className="bg-white text-black p-4 flex justify-between items-center shadow">
+
+        <h1 className="text-2xl font-bold text-blue-700">
+          TOPUP <span className="text-cyan-500">BD</span>
+        </h1>
+
+        <div className="flex gap-3">
+          <button className="bg-purple-600 px-4 py-2 rounded-full text-white">
+            💳 Wallet
+          </button>
+
+          <button className="bg-red-600 w-10 h-10 rounded-full text-white">
+            👤
+          </button>
+        </div>
+
       </header>
 
-      <div className="bg-yellow-300 text-black p-3 text-center font-bold">
-        📢 Notice: অর্ডার দেওয়ার আগে UID ভালোভাবে যাচাই করুন।
+      {/* Notice */}
+      <div className="bg-purple-700 p-3 text-center font-semibold">
+        📢 Notice: ২৪/৭ অটো টপআপ চালু আছে।
       </div>
 
+      {/* Banner */}
       <section className="p-4">
-        <div className="rounded-xl bg-slate-800 p-8 text-center">
-          <h2 className="text-2xl font-bold">WELCOME</h2>
-          <p className="text-gray-300 mt-2">
-            Free Fire, PUBG, MLBB এবং আরও অনেক গেম টপ-আপ।
-          </p>
+        <div className="rounded-xl overflow-hidden">
+          <img
+            src="https://via.placeholder.com/900x350"
+            className="w-full"
+            alt="Banner"
+          />
         </div>
       </section>
 
-      <section className="grid grid-cols-2 gap-4 p-4">
-        {games.map((game) => (
-          <div
-            key={game}
-            className="bg-slate-800 rounded-xl p-5 text-center hover:bg-slate-700"
-          >
-            <h3 className="font-bold">{game}</h3>
+      {/* Hot Offer */}
+      <section className="px-4">
+
+        <h2 className="text-3xl text-center font-bold mb-6">
+          HOT OFFER
+        </h2>
+
+        <div className="grid grid-cols-2 gap-4">
+
+          {cards.map((card) => (
             <Link
-  href="/freefire"
-  className="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg inline-block"
->
-  Order Now
-</Link>
-          </div>
-        ))}
+              key={card.title}
+              href={card.link}
+              className="bg-slate-800 rounded-xl overflow-hidden hover:scale-105 transition"
+            >
+              <img
+                src={card.image}
+                alt={card.title}
+                className="w-full h-36 object-cover"
+              />
+
+              <div className="p-3 text-center font-bold">
+                {card.title}
+              </div>
+            </Link>
+          ))}
+        </div>
+
       </section>
+
+      {/* Tutorial (Video Later) */}
+      <section className="p-4">
+
+        <div className="bg-yellow-100 text-black rounded-xl p-5">
+
+          <h2 className="text-2xl font-bold mb-4">
+            📺 How to Top Up
+          </h2>
+
+          <div className="bg-gray-300 rounded-lg h-56 flex items-center justify-center">
+            <p className="text-gray-700 text-center">
+              এখানে পরে YouTube ভিডিও যোগ করা হবে
+            </p>
+          </div>
+
+        </div>
+
+      </section>
+
+      {/* My Deposits */}
+      <section className="p-4">
+
+        <div className="bg-yellow-100 text-black rounded-xl p-5">
+
+          <h2 className="text-2xl font-bold mb-4">
+            📋 My Deposits
+          </h2>
+
+          <p>Serial No: 00000</p>
+
+          <p className="mt-2">
+            Status: Pending
+          </p>
+
+        </div>
+
+      </section>
+      {/* Bottom Navigation */}
+      <nav className="fixed bottom-0 left-0 right-0 bg-white text-black border-t shadow-lg">
+        <div className="grid grid-cols-5 text-center py-2">
+
+          <Link href="/" className="flex flex-col items-center">
+            <span>🏠</span>
+            <span className="text-xs">Home</span>
+          </Link>
+
+          <Link href="/tutorial" className="flex flex-col items-center">
+            <span>📺</span>
+            <span className="text-xs">Tutorial</span>
+          </Link>
+
+          <Link href="/add-money" className="flex flex-col items-center">
+            <span>💳</span>
+            <span className="text-xs">Add Money</span>
+          </Link>
+
+          <Link href="/orders" className="flex flex-col items-center">
+            <span>📦</span>
+            <span className="text-xs">Orders</span>
+          </Link>
+
+          <Link href="/account" className="flex flex-col items-center">
+            <span>👤</span>
+            <span className="text-xs">Account</span>
+          </Link>
+
+        </div>
+      </nav>
+
     </main>
   );
 }

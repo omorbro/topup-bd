@@ -1,141 +1,44 @@
-"use client";
-
-import { useState } from "react";
-
-const packages = [
-  { name: "25 Diamond", price: 25 },
-  { name: "50 Diamond", price: 45 },
-  { name: "115 Diamond", price: 90 },
-  { name: "240 Diamond", price: 180 },
-  { name: "355 Diamond", price: 270 },
-  { name: "505 Diamond", price: 360 },
-  { name: "610 Diamond", price: 450 },
-  { name: "850 Diamond", price: 620 },
-  { name: "1090 Diamond", price: 780 },
-  { name: "1240 Diamond", price: 890 },
-];
-
 export default function Home() {
-  const [playerName, setPlayerName] = useState("");
-  const [uid, setUid] = useState("");
-  const [diamond, setDiamond] = useState(packages[0].name);
-  const [payment, setPayment] = useState("bKash");
-  const [trxid, setTrxid] = useState("");
-const [screenshot, setScreenshot] = useState<File | null>(null);
-
-  const selected =
-    packages.find((p) => p.name === diamond) || packages[0];
+  const games = [
+    "🔥 Free Fire",
+    "⚔️ PUBG Mobile",
+    "🎮 Mobile Legends",
+    "💎 Free Fire MAX",
+  ];
 
   return (
-    <main className="min-h-screen bg-slate-900 flex items-center justify-center p-5">
-      <div className="w-full max-w-md bg-slate-800 rounded-2xl shadow-xl p-6">
+    <main className="min-h-screen bg-slate-900 text-white">
+      <header className="bg-blue-700 p-4 text-center">
+        <h1 className="text-3xl font-bold text-yellow-300">TOPUP BD</h1>
+        <p>বাংলাদেশের বিশ্বস্ত গেম টপ-আপ</p>
+      </header>
 
-        <h1 className="text-3xl font-bold text-yellow-400 text-center">
-          TOPUP BD
-        </h1>
+      <div className="bg-yellow-300 text-black p-3 text-center font-bold">
+        📢 Notice: অর্ডার দেওয়ার আগে UID ভালোভাবে যাচাই করুন।
+      </div>
 
-        <p className="text-center text-gray-300 mt-2">
-          Free Fire Diamond Top Up
-        </p>
-
-        <input
-          className="w-full mt-6 p-3 rounded-lg bg-slate-700 text-white"
-          placeholder="Player Name"
-          value={playerName}
-          onChange={(e)=>setPlayerName(e.target.value)}
-        />
-
-        <input
-          className="w-full mt-3 p-3 rounded-lg bg-slate-700 text-white"
-          placeholder="Free Fire UID"
-          value={uid}
-          onChange={(e)=>setUid(e.target.value)}
-        />
-
-        <select
-          className="w-full mt-3 p-3 rounded-lg bg-slate-700 text-white"
-          value={diamond}
-          onChange={(e)=>setDiamond(e.target.value)}
-        >
-          {packages.map((p)=>(
-            <option key={p.name}>{p.name}</option>
-          ))}
-        </select>
-
-        <div className="mt-3 bg-slate-700 rounded-lg p-3 text-center">
-          <p className="text-lg font-bold text-green-400">
-            Price: ৳{selected.price}
+      <section className="p-4">
+        <div className="rounded-xl bg-slate-800 p-8 text-center">
+          <h2 className="text-2xl font-bold">WELCOME</h2>
+          <p className="text-gray-300 mt-2">
+            Free Fire, PUBG, MLBB এবং আরও অনেক গেম টপ-আপ।
           </p>
         </div>
+      </section>
 
-        <select
-          className="w-full mt-3 p-3 rounded-lg bg-slate-700 text-white"
-          value={payment}
-          onChange={(e)=>setPayment(e.target.value)}
-        >
-          <option>bKash</option>
-          <option>Nagad</option>
-        </select>
-
-        <input
-          className="w-full mt-3 p-3 rounded-lg bg-slate-700 text-white"
-          placeholder="Transaction ID"
-          value={trxid}
-          onChange={(e)=>setTrxid(e.target.value)}
-        />
-<div className="mt-3">
-  <label className="block mb-2 text-sm">
-    Payment Screenshot
-  </label>
-
-  <input
-    type="file"
-    accept="image/*"
-    className="w-full p-2 rounded-lg bg-slate-700"
-    onChange={(e) =>
-      setScreenshot(e.target.files?.[0] || null)
-    }
-  />
-
-  {screenshot && (
-    <p className="mt-2 text-green-400 text-sm">
-      Selected: {screenshot.name}
-    </p>
-  )}
-</div>
-        <div className="mt-5 bg-slate-700 rounded-lg p-4">
-          <p>📱 bKash: 01890584909</p>
-          <p>💳 Nagad: 01890584909</p>
-        </div>
-
-<button
-  onClick={async () => {
-const formData = new FormData();
-
-formData.append("playerName", playerName);
-formData.append("uid", uid);
-formData.append("diamond", diamond);
-formData.append("price", String(selected.price));
-formData.append("payment", payment);
-formData.append("trxid", trxid);
-
-
-if (screenshot) {
-  formData.append("screenshot", screenshot);
-}
-
-await fetch("/api/order", {
-  method: "POST",
-  body: formData,
-});
-    alert("✅ আপনার অর্ডার সফলভাবে সাবমিট হয়েছে!");
-  }}
-  className="mt-6 w-full bg-blue-600 hover:bg-blue-700 py-3 rounded-lg"
->
-  Continue
-</button>
-
-    </div>
-  </main>
-);
+      <section className="grid grid-cols-2 gap-4 p-4">
+        {games.map((game) => (
+          <div
+            key={game}
+            className="bg-slate-800 rounded-xl p-5 text-center hover:bg-slate-700"
+          >
+            <h3 className="font-bold">{game}</h3>
+            <button className="mt-3 bg-blue-600 px-4 py-2 rounded-lg">
+              Order Now
+            </button>
+          </div>
+        ))}
+      </section>
+    </main>
+  );
 }

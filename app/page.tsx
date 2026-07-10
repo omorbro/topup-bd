@@ -12,7 +12,6 @@ export default function Home() {
       image: "https://via.placeholder.com/300x200",
       link: "/freefire",
     },
-    {
 
   return (
     <main className="min-h-screen bg-slate-900 text-white">

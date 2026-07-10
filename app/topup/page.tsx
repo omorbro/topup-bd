@@ -55,6 +55,35 @@ export default function Topup() {
     আপনার গেম আইডির নাম চেক করুন
   </button>
 </div>
+
+<div className="mt-8 bg-slate-800 rounded-xl p-4">
+  <h2 className="text-xl font-bold mb-4">Payment Method</h2>
+
+  <div className="grid grid-cols-2 gap-4">
+
+    <button className="bg-white text-black rounded-xl p-4 border-2 border-purple-600">
+      <p className="font-bold">bKash</p>
+      <p className="text-sm">Auto Payment</p>
+    </button>
+
+    <button className="bg-white text-black rounded-xl p-4">
+      <p className="font-bold">Nagad</p>
+      <p className="text-sm">Auto Payment</p>
+    </button>
+
+    <button className="bg-white text-black rounded-xl p-4">
+      <p className="font-bold">Rocket</p>
+      <p className="text-sm">Auto Payment</p>
+    </button>
+
+    <button className="bg-white text-black rounded-xl p-4">
+      <p className="font-bold">Wallet</p>
+      <p className="text-sm">Balance Payment</p>
+    </button>
+
+  </div>
+</div>
+
     </main>
   );
 }

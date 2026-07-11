@@ -18,7 +18,7 @@ const cards = [
     <main className="min-h-screen bg-slate-900 text-white">
 
       {/* Header */}
-      <header className="bg-white text-black p-4 flex justify-between items-center shadow">
+        <header className="sticky top-0 z-50 bg-white text-black p-4 flex justify-between items-center shadow-lg border-b border-gray-200">
 
         <h1 className="text-2xl font-bold text-blue-700">
           TOPUP <span className="text-cyan-500">BD</span>

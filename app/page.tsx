@@ -22,7 +22,12 @@ export default function Home() {
 
       <div className="bg-purple-700 p-3 text-center font-semibold">
         📢 Notice: ২৪/৭ অটো টপআপ চালু আছে।
-      </div>
+      
+    <div className="bg-yellow-400 text-black py-2 overflow-hidden whitespace-nowrap">
+  <div className="animate-marquee inline-block font-semibold">
+    🎉 New Offer: Free Fire Diamond Top Up • ⚡ Instant Delivery • 💳 bKash & Nagad Accepted • 🔥 24/7 Auto Top Up
+  </div>
+</div>                   
 
           <section className="p-4">
   <BannerSlider />

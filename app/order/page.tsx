@@ -4,23 +4,25 @@ import { addDoc, collection } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 
 export default function OrderPage() {
-  const submitOrder = async () => {
+  async function submitOrder() {
+    alert("Button Clicked!");
+
     try {
-      await addDoc(collection(db, "orders"), {
+      const docRef = await addDoc(collection(db, "orders"), {
         player: "Player",
         uid: "8112709077",
         package: "25 Diamond",
         price: "22",
         status: "Waiting",
-        createdAt: new Date(),
+        createdAt: Date.now(),
       });
 
-      alert("✅ Order Submitted Successfully!");
-    } catch (error) {
-      alert("❌ Failed to submit order!");
-      console.error(error);
+      alert("✅ Order Submitted!\nID: " + docRef.id);
+    } catch (err: any) {
+      console.error(err);
+      alert("❌ Error: " + (err?.message || "Unknown Error"));
     }
-  };
+  }
 
   return (
     <main className="min-h-screen bg-slate-900 text-white p-4">
@@ -53,6 +55,7 @@ export default function OrderPage() {
       </div>
 
       <button
+        type="button"
         onClick={submitOrder}
         className="w-full mt-8 bg-green-600 hover:bg-green-700 rounded-xl py-3 font-bold"
       >

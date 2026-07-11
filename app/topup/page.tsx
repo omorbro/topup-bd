@@ -95,6 +95,10 @@ export default function Topup() {
         </div>
       </div>
 
+     <button className="w-full mt-6 bg-green-600 hover:bg-green-700 rounded-xl py-4 text-xl font-bold">
+  🚀 Buy Now
+</button>
+
     </main>
   );
 }

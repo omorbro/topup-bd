@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Header from "../components/Header";
+import BannerSlider from "../components/BannerSlider";
 
 export default function Home() {
   const cards = [
@@ -23,15 +24,9 @@ export default function Home() {
         📢 Notice: ২৪/৭ অটো টপআপ চালু আছে।
       </div>
 
-      <section className="p-4">
-        <div className="rounded-xl overflow-hidden">
-          <img
-            src="/images/banner.jpg"
-            alt="Banner"
-            className="w-full"
-          />
-        </div>
-      </section>
+          <section className="p-4">
+  <BannerSlider />
+</section>
 
       <section className="px-4">
         <h2 className="text-3xl text-center font-bold mb-6">

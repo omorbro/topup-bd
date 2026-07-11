@@ -1,91 +1,68 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import {
-  collection,
-  onSnapshot,
-  orderBy,
-  query,
-} from "firebase/firestore";
-import { db } from "@/lib/firebase";
-
-type Order = {
-  id: string;
-  player: string;
-  uid: string;
-  package: string;
-  price: string;
-  status: string;
-};
+import { useState } from "react";
 
 export default function AdminPage() {
-  const [orders, setOrders] = useState<Order[]>([]);
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [password, setPassword] = useState("");
 
-  useEffect(() => {
-    const q = query(
-      collection(db, "orders"),
-      orderBy("createdAt", "desc")
+  const login = () => {
+    if (password === "topupbd123") {
+      setLoggedIn(true);
+    } else {
+      alert("Wrong Password!");
+    }
+  };
+
+  if (!loggedIn) {
+    return (
+      <main className="min-h-screen bg-slate-900 flex items-center justify-center p-6">
+        <div className="bg-slate-800 p-6 rounded-xl w-full max-w-sm">
+          <h1 className="text-3xl font-bold text-yellow-400 mb-6 text-center">
+            Admin Login
+          </h1>
+
+          <input
+            type="password"
+            placeholder="Enter Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full p-3 rounded-lg bg-slate-700 text-white mb-4"
+          />
+
+          <button
+            onClick={login}
+            className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-3 rounded-lg"
+          >
+            Login
+          </button>
+        </div>
+      </main>
     );
-
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const data = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...(doc.data() as Omit<Order, "id">),
-      }));
-
-      setOrders(data);
-    });
-
-    return () => unsubscribe();
-  }, []);
-
+  }
   return (
     <main className="min-h-screen bg-slate-900 text-white p-6">
-      <h1 className="text-3xl font-bold text-yellow-400 mb-6">
-        TOPUP BD Admin Panel
-      </h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold text-yellow-400">
+          TOPUP BD Admin Panel
+        </h1>
 
-      <div className="bg-slate-800 rounded-xl p-4 overflow-x-auto">
-        <table className="w-full">
-          <thead>
-            <tr className="border-b border-slate-600">
-              <th className="text-left p-2">Player</th>
-              <th className="text-left p-2">UID</th>
-              <th className="text-left p-2">Package</th>
-              <th className="text-left p-2">Price</th>
-              <th className="text-left p-2">Status</th>
-            </tr>
-          </thead>
+        <button
+          onClick={() => setLoggedIn(false)}
+          className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg font-bold"
+        >
+          Logout
+        </button>
+      </div>
 
-          <tbody>
-            {orders.length === 0 ? (
-              <tr>
-                <td className="p-2">No Orders Yet</td>
-                <td className="p-2">-</td>
-                <td className="p-2">-</td>
-                <td className="p-2">-</td>
-                <td className="p-2 text-yellow-400">Waiting</td>
-              </tr>
-            ) : (
-              orders.map((order) => (
-                <tr
-                  key={order.id}
-                  className="border-b border-slate-700"
-                >
-                  <td className="p-2">{order.player}</td>
-                  <td className="p-2">{order.uid}</td>
-                  <td className="p-2">{order.package}</td>
-                  <td className="p-2">৳ {order.price}</td>
-                  <td className="p-2">
-                    <span className="text-green-400">
-                      {order.status}
-                    </span>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+      <div className="bg-slate-800 rounded-xl p-4">
+        <p className="text-green-400 text-lg font-bold">
+          ✅ Login Successful
+        </p>
+
+        <p className="text-slate-300 mt-2">
+          এখন এখানে আগের Firestore Order Table বসানো হবে।
+        </p>
       </div>
     </main>
   );

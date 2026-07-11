@@ -16,17 +16,23 @@ export default function Header() {
         </div>
 
         <div className="flex items-center gap-2">
-          <button className="bg-gray-100 px-3 py-2 rounded-lg">🔔</button>
-          <button className="bg-green-600 text-white px-4 py-2 rounded-lg">
+          <button className="bg-gray-100 px-3 py-2 rounded-lg hover:bg-gray-200">
+            🔔
+          </button>
+
+          <button className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
             Wallet
           </button>
-          <button className="bg-blue-600 text-white px-4 py-2 rounded-lg">
+
+          <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
             Login
           </button>
-          <button className="bg-red-600 text-white px-4 py-2 rounded-lg">
+
+          <button className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700">
             Register
           </button>
         </div>
+
       </div>
     </header>
   );

@@ -1,9 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export default function Topup() {
+  const router = useRouter();
+
   const [playerId, setPlayerId] = useState("");
   const [selectedProduct, setSelectedProduct] = useState("");
   const [selectedPayment, setSelectedPayment] = useState("");
@@ -43,7 +46,7 @@ export default function Topup() {
         />
       </div>
 
-      <h1 className="text-3xl font-bold mb-6 text-center">
+      <h1 className="text-3xl font-bold text-center mb-6">
         💎 Free Fire UID Top Up
       </h1>
 
@@ -77,11 +80,20 @@ export default function Topup() {
           className="w-full p-3 rounded-lg bg-slate-700 border border-slate-600 outline-none"
         />
 
-        <button className="w-full mt-4 bg-indigo-600 hover:bg-indigo-700 py-3 rounded-lg font-bold">
+        <button
+          className="w-full mt-4 bg-indigo-600 hover:bg-indigo-700 py-3 rounded-lg font-bold"
+          onClick={() => {
+            if (!playerId.trim()) {
+              alert("Player ID লিখুন");
+              return;
+            }
+
+            alert("Player ID: " + playerId);
+          }}
+        >
           🔍 Check Player
         </button>
       </div>
-
       <div className="mt-8 bg-slate-800 rounded-xl p-4">
         <h2 className="text-xl font-bold mb-4">
           Payment Method
@@ -91,9 +103,9 @@ export default function Topup() {
 
           <button
             onClick={() => setSelectedPayment("bKash")}
-            className={`rounded-xl p-4 ${
+            className={`rounded-xl p-4 transition ${
               selectedPayment === "bKash"
-                ? "bg-pink-600"
+                ? "bg-pink-600 text-white"
                 : "bg-white text-black"
             }`}
           >
@@ -102,9 +114,9 @@ export default function Topup() {
 
           <button
             onClick={() => setSelectedPayment("Nagad")}
-            className={`rounded-xl p-4 ${
+            className={`rounded-xl p-4 transition ${
               selectedPayment === "Nagad"
-                ? "bg-orange-500"
+                ? "bg-orange-500 text-white"
                 : "bg-white text-black"
             }`}
           >
@@ -113,9 +125,9 @@ export default function Topup() {
 
           <button
             onClick={() => setSelectedPayment("Wallet")}
-            className={`rounded-xl p-4 ${
+            className={`rounded-xl p-4 transition ${
               selectedPayment === "Wallet"
-                ? "bg-blue-600"
+                ? "bg-blue-600 text-white"
                 : "bg-white text-black"
             }`}
           >
@@ -124,6 +136,7 @@ export default function Topup() {
 
         </div>
       </div>
+
       <button
         onClick={() => {
           if (!selectedProduct) {
@@ -141,43 +154,40 @@ export default function Topup() {
             return;
           }
 
-          alert(
-            `✅ Order Confirmed!\n\n` +
-            `💎 Package: ${selectedProduct}\n` +
-            `🆔 Player ID: ${playerId}\n` +
-            `💳 Payment: ${selectedPayment}`
-          );
+          router.push("/order");
         }}
-        className="w-full mt-8 bg-green-600 hover:bg-green-700 rounded-xl py-4 text-xl font-bold transition"
+        className="w-full mt-8 bg-green-600 hover:bg-green-700 rounded-xl py-4 text-xl font-bold"
       >
         🚀 Buy Now
       </button>
 
-      <div className="mt-6 bg-slate-800 rounded-xl p-4 text-sm text-gray-300">
-        <h3 className="font-bold text-white mb-2">
+      <div className="mt-6 bg-slate-800 rounded-xl p-4">
+        <h3 className="text-lg font-bold mb-4">
           📋 Selected Order
         </h3>
 
-        <p>
-          💎 Package:{" "}
-          <span className="text-cyan-400">
-            {selectedProduct || "Not Selected"}
-          </span>
-        </p>
+        <div className="space-y-2">
+          <p>
+            💎 Package:
+            <span className="text-cyan-400 ml-2">
+              {selectedProduct || "Not Selected"}
+            </span>
+          </p>
 
-        <p className="mt-2">
-          🆔 Player ID:{" "}
-          <span className="text-cyan-400">
-            {playerId || "Not Entered"}
-          </span>
-        </p>
+          <p>
+            🆔 Player ID:
+            <span className="text-cyan-400 ml-2">
+              {playerId || "Not Entered"}
+            </span>
+          </p>
 
-        <p className="mt-2">
-          💳 Payment:{" "}
-          <span className="text-cyan-400">
-            {selectedPayment || "Not Selected"}
-          </span>
-        </p>
+          <p>
+            💳 Payment:
+            <span className="text-cyan-400 ml-2">
+              {selectedPayment || "Not Selected"}
+            </span>
+          </p>
+        </div>
       </div>
 
     </main>

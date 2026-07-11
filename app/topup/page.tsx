@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 
 export default function Topup() {
   const router = useRouter();
@@ -66,7 +65,6 @@ export default function Topup() {
           </button>
         ))}
       </div>
-
       <div className="mt-8 bg-slate-800 rounded-xl p-4">
         <h2 className="text-xl font-bold mb-4">
           Player ID
@@ -94,13 +92,13 @@ export default function Topup() {
           🔍 Check Player
         </button>
       </div>
+
       <div className="mt-8 bg-slate-800 rounded-xl p-4">
         <h2 className="text-xl font-bold mb-4">
           Payment Method
         </h2>
 
         <div className="grid grid-cols-3 gap-4">
-
           <button
             onClick={() => setSelectedPayment("bKash")}
             className={`rounded-xl p-4 transition ${
@@ -133,10 +131,8 @@ export default function Topup() {
           >
             Wallet
           </button>
-
         </div>
       </div>
-
       <button
         onClick={() => {
           if (!selectedProduct) {
@@ -154,7 +150,15 @@ export default function Topup() {
             return;
           }
 
-          router.push("/order");
+          const selectedItem = products.find(
+            (item) => item.name === selectedProduct
+          );
+
+          const price = selectedItem?.price || "";
+
+          router.push(
+            `/order?uid=${encodeURIComponent(playerId)}&package=${encodeURIComponent(selectedProduct)}&payment=${encodeURIComponent(selectedPayment)}&price=${encodeURIComponent(price)}`
+          );
         }}
         className="w-full mt-8 bg-green-600 hover:bg-green-700 rounded-xl py-4 text-xl font-bold"
       >

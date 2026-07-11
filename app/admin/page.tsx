@@ -6,6 +6,17 @@ export default function AdminPage() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [password, setPassword] = useState("");
 
+  const orders = [
+    {
+      id: "1",
+      player: "Player",
+      uid: "8112709077",
+      package: "25 Diamond",
+      price: 22,
+      status: "Waiting",
+    },
+  ];
+
   const login = () => {
     if (password === "topupbd123") {
       setLoggedIn(true);
@@ -40,6 +51,7 @@ export default function AdminPage() {
       </main>
     );
   }
+
   return (
     <main className="min-h-screen bg-slate-900 text-white p-6">
       <div className="flex justify-between items-center mb-6">
@@ -55,14 +67,30 @@ export default function AdminPage() {
         </button>
       </div>
 
-      <div className="bg-slate-800 rounded-xl p-4">
-        <p className="text-green-400 text-lg font-bold">
-          ✅ Login Successful
-        </p>
+      <div className="bg-slate-800 rounded-xl p-4 overflow-x-auto">
+        <table className="w-full text-left">
+          <thead>
+            <tr className="border-b border-slate-600">
+              <th className="p-2">Player</th>
+              <th className="p-2">UID</th>
+              <th className="p-2">Package</th>
+              <th className="p-2">Price</th>
+              <th className="p-2">Status</th>
+            </tr>
+          </thead>
 
-        <p className="text-slate-300 mt-2">
-          এখন এখানে আগের Firestore Order Table বসানো হবে।
-        </p>
+          <tbody>
+            {orders.map((order) => (
+              <tr key={order.id} className="border-b border-slate-700">
+                <td className="p-2">{order.player}</td>
+                <td className="p-2">{order.uid}</td>
+                <td className="p-2">{order.package}</td>
+                <td className="p-2">৳ {order.price}</td>
+                <td className="p-2 text-green-400">{order.status}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </main>
   );

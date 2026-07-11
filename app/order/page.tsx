@@ -12,7 +12,7 @@ export default function OrderPage() {
         player: "Player",
         uid: "8112709077",
         package: "25 Diamond",
-        price: "22",
+        price: 22,
         status: "Waiting",
         createdAt: Date.now(),
       });

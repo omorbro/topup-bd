@@ -1,21 +1,38 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import {
+  collection,
+  onSnapshot,
+  query,
+  orderBy,
+} from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
 export default function AdminPage() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [password, setPassword] = useState("");
+  const [orders, setOrders] = useState<any[]>([]);
 
-  const orders = [
-    {
-      id: "1",
-      player: "Player",
-      uid: "8112709077",
-      package: "25 Diamond",
-      price: 22,
-      status: "Waiting",
-    },
-  ];
+  useEffect(() => {
+    if (!loggedIn) return;
+
+    const q = query(
+      collection(db, "orders"),
+      orderBy("createdAt", "desc")
+    );
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const list = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      setOrders(list);
+    });
+
+    return () => unsubscribe();
+  }, [loggedIn]);
 
   const login = () => {
     if (password === "topupbd123") {
@@ -71,24 +88,37 @@ export default function AdminPage() {
         <table className="w-full text-left">
           <thead>
             <tr className="border-b border-slate-600">
-              <th className="p-2">Player</th>
               <th className="p-2">UID</th>
               <th className="p-2">Package</th>
+              <th className="p-2">Payment</th>
               <th className="p-2">Price</th>
               <th className="p-2">Status</th>
             </tr>
           </thead>
 
           <tbody>
-            {orders.map((order) => (
+            {orders.map((order: any) => (
               <tr key={order.id} className="border-b border-slate-700">
-                <td className="p-2">{order.player}</td>
                 <td className="p-2">{order.uid}</td>
                 <td className="p-2">{order.package}</td>
-                <td className="p-2">৳ {order.price}</td>
-                <td className="p-2 text-green-400">{order.status}</td>
+                <td className="p-2">{order.payment}</td>
+                <td className="p-2">{order.price}</td>
+                <td className="p-2 text-green-400">
+                  {order.status}
+                </td>
               </tr>
             ))}
+
+            {orders.length === 0 && (
+              <tr>
+                <td
+                  colSpan={5}
+                  className="text-center p-6 text-gray-400"
+                >
+                  No Orders Found
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

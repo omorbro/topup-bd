@@ -6,6 +6,8 @@ import {
   onSnapshot,
   query,
   orderBy,
+  doc,
+  updateDoc,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 
@@ -33,6 +35,17 @@ export default function AdminPage() {
 
     return () => unsubscribe();
   }, [loggedIn]);
+
+  async function changeStatus(id: string, status: string) {
+    try {
+      await updateDoc(doc(db, "orders", id), {
+        status,
+      });
+    } catch (err) {
+      console.error(err);
+      alert("Status Update Failed");
+    }
+  }
 
   const login = () => {
     if (password === "topupbd123") {
@@ -103,8 +116,19 @@ export default function AdminPage() {
                 <td className="p-2">{order.package}</td>
                 <td className="p-2">{order.payment}</td>
                 <td className="p-2">{order.price}</td>
-                <td className="p-2 text-green-400">
-                  {order.status}
+
+                <td className="p-2">
+                  <select
+                    value={order.status}
+                    onChange={(e) =>
+                      changeStatus(order.id, e.target.value)
+                    }
+                    className="bg-slate-700 border border-slate-600 rounded px-2 py-1"
+                  >
+                    <option value="Waiting">⏳ Waiting</option>
+                    <option value="Completed">✅ Completed</option>
+                    <option value="Cancelled">❌ Cancelled</option>
+                  </select>
                 </td>
               </tr>
             ))}

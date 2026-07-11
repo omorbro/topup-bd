@@ -1,40 +1,24 @@
 import Link from "next/link";
+import Header from "../components/Header";
 
 export default function Home() {
-const cards = [
-  {
-    title: "🔥 Daily Offer",
-    image: "/images/daily-offer.jpg",
-    link: "/daily-offer",
-  },
-  {
-    title: "💎 Top Up",
-    image: "/images/topup.jpg",
-    link: "/topup",
-  },
-];
+  const cards = [
+    {
+      title: "🔥 Daily Offer",
+      image: "/images/daily-offer.jpg",
+      link: "/daily-offer",
+    },
+    {
+      title: "💎 Top Up",
+      image: "/images/topup.jpg",
+      link: "/topup",
+    },
+  ];
 
   return (
     <main className="min-h-screen bg-slate-900 text-white">
 
-      {/* Header */}
-        <header className="sticky top-0 z-50 bg-white text-black p-4 flex justify-between items-center shadow-lg border-b border-gray-200">
-
-        <h1 className="text-2xl font-bold text-blue-700">
-          TOPUP <span className="text-cyan-500">BD</span>
-        </h1>
-
-        <div className="flex gap-3">
-          <button className="bg-purple-600 px-4 py-2 rounded-full text-white">
-            💳 Wallet
-          </button>
-
-          <button className="bg-red-600 w-10 h-10 rounded-full text-white">
-            👤
-          </button>
-        </div>
-
-      </header>
+      <Header />
 
       {/* Notice */}
       <div className="bg-purple-700 p-3 text-center font-semibold">
@@ -45,16 +29,15 @@ const cards = [
       <section className="p-4">
         <div className="rounded-xl overflow-hidden">
           <img
-            src="https://via.placeholder.com/900x350"
-            className="w-full"
+            src="/images/banner.jpg"
             alt="Banner"
+            className="w-full"
           />
         </div>
       </section>
 
       {/* Hot Offer */}
       <section className="px-4">
-
         <h2 className="text-3xl text-center font-bold mb-6">
           HOT OFFER
         </h2>
@@ -79,12 +62,9 @@ const cards = [
             </Link>
           ))}
         </div>
-
       </section>
-
-      {/* Tutorial (Video Later) */}
+      {/* Tutorial */}
       <section className="p-4">
-
         <div className="bg-yellow-100 text-black rounded-xl p-5">
 
           <h2 className="text-2xl font-bold mb-4">
@@ -98,12 +78,10 @@ const cards = [
           </div>
 
         </div>
-
       </section>
 
       {/* My Deposits */}
       <section className="p-4">
-
         <div className="bg-yellow-100 text-black rounded-xl p-5">
 
           <h2 className="text-2xl font-bold mb-4">
@@ -117,8 +95,8 @@ const cards = [
           </p>
 
         </div>
-
       </section>
+
       {/* Bottom Navigation */}
       <nav className="fixed bottom-0 left-0 right-0 bg-white text-black border-t shadow-lg">
         <div className="grid grid-cols-5 text-center py-2">

@@ -1,6 +1,13 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 
 export default function Topup() {
+  const [playerId, setPlayerId] = useState("");
+  const [selectedProduct, setSelectedProduct] = useState("");
+  const [selectedPayment, setSelectedPayment] = useState("");
+
   const products = [
     { name: "25 Diamond", price: "TK 22" },
     { name: "50 Diamond", price: "TK 37" },
@@ -36,68 +43,142 @@ export default function Topup() {
         />
       </div>
 
-      <h1 className="text-3xl font-bold mb-6">
-        💎 UID TOP UP (BD)
+      <h1 className="text-3xl font-bold mb-6 text-center">
+        💎 Free Fire UID Top Up
       </h1>
 
       <div className="grid grid-cols-2 gap-4">
         {products.map((item) => (
-          <div
+          <button
             key={item.name}
-            className="bg-slate-800 rounded-xl p-4 text-center border border-slate-700"
+            onClick={() => setSelectedProduct(item.name)}
+            className={`rounded-xl p-4 border transition ${
+              selectedProduct === item.name
+                ? "bg-green-600 border-green-400"
+                : "bg-slate-800 border-slate-700 hover:border-cyan-400"
+            }`}
           >
             <h2 className="font-bold">{item.name}</h2>
             <p className="text-cyan-400 mt-2">{item.price}</p>
-          </div>
+          </button>
         ))}
       </div>
 
       <div className="mt-8 bg-slate-800 rounded-xl p-4">
-        <h2 className="text-xl font-bold mb-4">Player ID</h2>
+        <h2 className="text-xl font-bold mb-4">
+          Player ID
+        </h2>
 
         <input
           type="text"
-          placeholder="Player ID (UID)"
-          className="w-full p-3 rounded-lg bg-slate-700 text-white border border-slate-600 outline-none"
+          value={playerId}
+          onChange={(e) => setPlayerId(e.target.value)}
+          placeholder="Enter Free Fire UID"
+          className="w-full p-3 rounded-lg bg-slate-700 border border-slate-600 outline-none"
         />
 
         <button className="w-full mt-4 bg-indigo-600 hover:bg-indigo-700 py-3 rounded-lg font-bold">
-          আপনার গেম আইডির নাম চেক করুন
+          🔍 Check Player
         </button>
       </div>
 
       <div className="mt-8 bg-slate-800 rounded-xl p-4">
-        <h2 className="text-xl font-bold mb-4">Payment Method</h2>
+        <h2 className="text-xl font-bold mb-4">
+          Payment Method
+        </h2>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-3 gap-4">
 
-          <Link
-            href="/payment/bkash"
-            className="bg-white text-black rounded-xl p-4 border-2 border-pink-500 block text-center"
+          <button
+            onClick={() => setSelectedPayment("bKash")}
+            className={`rounded-xl p-4 ${
+              selectedPayment === "bKash"
+                ? "bg-pink-600"
+                : "bg-white text-black"
+            }`}
           >
-            <p className="font-bold">bKash</p>
-            <p className="text-sm">Auto Payment</p>
-          </Link>
+            bKash
+          </button>
 
-          <Link
-            href="/payment/nagad"
-            className="bg-white text-black rounded-xl p-4 border-2 border-orange-500 block text-center"
+          <button
+            onClick={() => setSelectedPayment("Nagad")}
+            className={`rounded-xl p-4 ${
+              selectedPayment === "Nagad"
+                ? "bg-orange-500"
+                : "bg-white text-black"
+            }`}
           >
-            <p className="font-bold">Nagad</p>
-            <p className="text-sm">Auto Payment</p>
-          </Link>
+            Nagad
+          </button>
 
-          <button className="bg-white text-black rounded-xl p-4">
-            <p className="font-bold">Wallet</p>
-            <p className="text-sm">Balance Payment</p>
+          <button
+            onClick={() => setSelectedPayment("Wallet")}
+            className={`rounded-xl p-4 ${
+              selectedPayment === "Wallet"
+                ? "bg-blue-600"
+                : "bg-white text-black"
+            }`}
+          >
+            Wallet
           </button>
 
         </div>
       </div>
+      <button
+        onClick={() => {
+          if (!selectedProduct) {
+            alert("⚠️ আগে একটি Diamond Package নির্বাচন করুন।");
+            return;
+          }
 
-     <button className="w-full mt-6 bg-green-600 hover:bg-green-700 rounded-xl py-4 text-xl font-bold">
-  🚀 Buy Now
-</button>
+          if (!playerId.trim()) {
+            alert("⚠️ আপনার Player ID লিখুন।");
+            return;
+          }
+
+          if (!selectedPayment) {
+            alert("⚠️ একটি Payment Method নির্বাচন করুন।");
+            return;
+          }
+
+          alert(
+            `✅ Order Confirmed!\n\n` +
+            `💎 Package: ${selectedProduct}\n` +
+            `🆔 Player ID: ${playerId}\n` +
+            `💳 Payment: ${selectedPayment}`
+          );
+        }}
+        className="w-full mt-8 bg-green-600 hover:bg-green-700 rounded-xl py-4 text-xl font-bold transition"
+      >
+        🚀 Buy Now
+      </button>
+
+      <div className="mt-6 bg-slate-800 rounded-xl p-4 text-sm text-gray-300">
+        <h3 className="font-bold text-white mb-2">
+          📋 Selected Order
+        </h3>
+
+        <p>
+          💎 Package:{" "}
+          <span className="text-cyan-400">
+            {selectedProduct || "Not Selected"}
+          </span>
+        </p>
+
+        <p className="mt-2">
+          🆔 Player ID:{" "}
+          <span className="text-cyan-400">
+            {playerId || "Not Entered"}
+          </span>
+        </p>
+
+        <p className="mt-2">
+          💳 Payment:{" "}
+          <span className="text-cyan-400">
+            {selectedPayment || "Not Selected"}
+          </span>
+        </p>
+      </div>
 
     </main>
   );

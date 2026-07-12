@@ -20,6 +20,9 @@ export default function AdminPage() {
   const [search, setSearch] = useState("");
 
   const [statusFilter, setStatusFilter] = useState("All");
+  const [selectedOrder, setSelectedOrder] = useState<any>(null);
+
+const [showDetails, setShowDetails] = useState(false);
 
   useEffect(() => {
     if (!loggedIn) return;
@@ -264,7 +267,10 @@ export default function AdminPage() {
               <th className="p-3">
                 Status
               </th>
-
+              <th className="p-3">
+                Details
+              </th>
+                              
               <th className="p-3">
                 Action
               </th>
@@ -311,9 +317,21 @@ export default function AdminPage() {
                     {order.status}
                   </span>
                 </td>
-
                 <td className="p-3">
-                  <select
+
+  <button
+    onClick={() => {
+      setSelectedOrder(order);
+      setShowDetails(true);
+    }}
+    className="bg-cyan-600 hover:bg-cyan-700 px-3 py-2 rounded-lg font-semibold"
+  >
+    👁 View
+  </button>
+
+</td>
+                <td className="p-3">
+                 <select
                     value={order.status}
                     onChange={(e) =>
                       changeStatus(order.id, e.target.value)

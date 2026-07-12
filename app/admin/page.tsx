@@ -14,6 +14,19 @@ import { db } from "@/lib/firebase";
 export default function AdminPage() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [password, setPassword] = useState("");
+  const [checkingLogin, setCheckingLogin] = useState(true);
+
+useEffect(() => {
+  const loggedIn = localStorage.getItem("admin-login");
+
+  if (loggedIn !== "true") {
+    window.location.href = "/admin/login";
+    return;
+  }
+
+  setLoggedIn(true);
+  setCheckingLogin(false);
+}, []);
 
   const [orders, setOrders] = useState<any[]>([]);
   const [search, setSearch] = useState("");
@@ -42,6 +55,13 @@ export default function AdminPage() {
     return () => unsubscribe();
   }, [loggedIn]);
 
+if (checkingLogin) {
+  return (
+    <main className="min-h-screen flex items-center justify-center bg-slate-900 text-white">
+      Checking Login...
+    </main>
+  );
+}
   async function changeStatus(
     id: string,
     status: string
@@ -56,13 +76,14 @@ export default function AdminPage() {
     }
   }
 
-  const login = () => {
-    if (password === "topupbd123") {
-      setLoggedIn(true);
-    } else {
-      alert("Wrong Password!");
-    }
-  };
+const login = () => {
+  if (password === "topupbd123") {
+    localStorage.setItem("admin-login", "true");
+    setLoggedIn(true);
+  } else {
+    alert("Wrong Password!");
+  }
+};
 
   const totalOrders = orders.length;
 

@@ -2,15 +2,28 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+
 import {
   collection,
-  onSnapshot,
-  query,
-  orderBy,
+  deleteDoc,
   doc,
+  onSnapshot,
+  orderBy,
+  query,
   updateDoc,
 } from "firebase/firestore";
+
 import { db } from "@/lib/firebase";
+
+type Order = {
+  id: string;
+  uid?: string;
+  package?: string;
+  payment?: string;
+  price?: number | string;
+  status?: string;
+  createdAt?: any;
+};
 
 export default function AdminPage() {
   const router = useRouter();
@@ -18,13 +31,54 @@ export default function AdminPage() {
   const [checkingLogin, setCheckingLogin] = useState(true);
   const [loggedIn, setLoggedIn] = useState(false);
 
-  const [orders, setOrders] = useState<any[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
+
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
+  const [dateFilter, setDateFilter] = useState("All");
 
-  const [selectedOrder, setSelectedOrder] = useState<any>(null);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [showDetails, setShowDetails] = useState(false);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const ordersPerPage = 10;
+
+  const [toast, setToast] = useState("");
+
+  function showToast(message: string) {
+    setToast(message);
+
+    setTimeout(() => {
+      setToast("");
+    }, 2500);
+  }
+
+  async function changeStatus(id: string, status: string) {
+    try {
+      await updateDoc(doc(db, "orders", id), {
+        status,
+      });
+
+      showToast("✅ Status Updated");
+    } catch {
+      showToast("❌ Status Update Failed");
+    }
+  }
+
+  async function deleteOrder(id: string) {
+    const ok = confirm("Delete this order?");
+
+    if (!ok) return;
+
+    try {
+      await deleteDoc(doc(db, "orders", id));
+
+      showToast("🗑 Order Deleted");
+    } catch {
+      showToast("❌ Delete Failed");
+    }
+  }
   useEffect(() => {
     const login = localStorage.getItem("admin-login");
 
@@ -35,6 +89,13 @@ export default function AdminPage() {
 
     setLoggedIn(true);
     setCheckingLogin(false);
+
+    const timer = setTimeout(() => {
+      localStorage.removeItem("admin-login");
+      router.replace("/admin/login");
+    }, 1000 * 60 * 30);
+
+    return () => clearTimeout(timer);
   }, [router]);
 
   useEffect(() => {
@@ -46,35 +107,17 @@ export default function AdminPage() {
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      const list = snapshot.docs.map((item) => ({
-        id: item.id,
-        ...item.data(),
+      const data: Order[] = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...(doc.data() as Omit<Order, "id">),
       }));
 
-      setOrders(list);
+      setOrders(data);
+      setLoading(false);
     });
 
     return () => unsubscribe();
   }, [loggedIn]);
-
-  async function changeStatus(id: string, status: string) {
-    try {
-      await updateDoc(doc(db, "orders", id), {
-        status,
-      });
-    } catch (error) {
-      console.error(error);
-      alert("Status Update Failed");
-    }
-  }
-
-  if (checkingLogin) {
-    return (
-      <main className="min-h-screen bg-slate-900 flex items-center justify-center text-white">
-        Checking Login...
-      </main>
-    );
-  }
 
   const totalOrders = orders.length;
 
@@ -91,6 +134,24 @@ export default function AdminPage() {
   ).length;
 
   const totalSales = orders
+    .filter((o) => o.status === "Completed")
+    .reduce((sum, o) => sum + Number(o.price || 0), 0);
+
+  const today = new Date().toDateString();
+
+  const todayOrders = orders.filter((o) => {
+    if (!o.createdAt) return false;
+
+    const date = new Date(
+      o.createdAt.seconds
+        ? o.createdAt.seconds * 1000
+        : o.createdAt
+    );
+
+    return date.toDateString() === today;
+  });
+
+  const todaySales = todayOrders
     .filter((o) => o.status === "Completed")
     .reduce((sum, o) => sum + Number(o.price || 0), 0);
 
@@ -118,104 +179,199 @@ export default function AdminPage() {
     });
   }, [orders, search, statusFilter]);
 
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredOrders.length / ordersPerPage)
+  );
+
+  const currentOrders = filteredOrders.slice(
+    (currentPage - 1) * ordersPerPage,
+    currentPage * ordersPerPage
+  );
+
+  if (checkingLogin) {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-slate-900 text-white">
+        Checking Login...
+      </main>
+    );
+  }
   return (
-    <main className="min-h-screen bg-slate-900 text-white p-6">
+    <main className="min-h-screen bg-slate-950 text-white p-4 md:p-6">
 
-      <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
+      {toast && (
+        <div className="fixed top-5 right-5 z-50 rounded-xl bg-green-600 px-5 py-3 font-bold shadow-xl">
+          {toast}
+        </div>
+      )}
 
-        <h1 className="text-3xl font-bold text-yellow-400">
-          TOPUP BD Admin Panel
-        </h1>
+      <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+
+        <div>
+          <h1 className="text-3xl font-extrabold text-yellow-400">
+            🚀 TOPUP BD Admin Panel
+          </h1>
+
+          <p className="mt-1 text-gray-400">
+            Premium Dashboard v2.0
+          </p>
+        </div>
 
         <button
           onClick={() => {
             localStorage.removeItem("admin-login");
             router.replace("/admin/login");
           }}
-          className="bg-red-600 hover:bg-red-700 px-5 py-2 rounded-xl font-bold"
+          className="rounded-xl bg-red-600 px-6 py-3 font-bold hover:bg-red-700"
         >
           Logout
         </button>
 
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+      <div className="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-4 xl:grid-cols-7">
 
-        <div className="bg-blue-600 rounded-xl p-4">
-          <p className="text-sm">📦 Total Orders</p>
-          <h2 className="text-3xl font-bold">{totalOrders}</h2>
+        <div className="rounded-2xl bg-blue-600 p-5 shadow-lg">
+          <p className="text-sm text-white/80">📦 Total Orders</p>
+          <h2 className="mt-2 text-3xl font-bold">
+            {totalOrders}
+          </h2>
         </div>
 
-        <div className="bg-yellow-500 rounded-xl p-4">
+        <div className="rounded-2xl bg-cyan-600 p-5 shadow-lg">
+          <p className="text-sm text-white/80">📅 Today Orders</p>
+          <h2 className="mt-2 text-3xl font-bold">
+            {todayOrders.length}
+          </h2>
+        </div>
+
+        <div className="rounded-2xl bg-green-600 p-5 shadow-lg">
+          <p className="text-sm text-white/80">💰 Total Sales</p>
+          <h2 className="mt-2 text-3xl font-bold">
+            ৳ {totalSales}
+          </h2>
+        </div>
+
+        <div className="rounded-2xl bg-emerald-600 p-5 shadow-lg">
+          <p className="text-sm text-white/80">💵 Today Sales</p>
+          <h2 className="mt-2 text-3xl font-bold">
+            ৳ {todaySales}
+          </h2>
+        </div>
+
+        <div className="rounded-2xl bg-yellow-500 p-5 text-black shadow-lg">
           <p className="text-sm">⏳ Waiting</p>
-          <h2 className="text-3xl font-bold">{waitingOrders}</h2>
+          <h2 className="mt-2 text-3xl font-bold">
+            {waitingOrders}
+          </h2>
         </div>
 
-        <div className="bg-green-600 rounded-xl p-4">
-          <p className="text-sm">✅ Completed</p>
-          <h2 className="text-3xl font-bold">{completedOrders}</h2>
+        <div className="rounded-2xl bg-green-700 p-5 shadow-lg">
+          <p className="text-sm text-white/80">✅ Completed</p>
+          <h2 className="mt-2 text-3xl font-bold">
+            {completedOrders}
+          </h2>
         </div>
 
-        <div className="bg-red-600 rounded-xl p-4">
-          <p className="text-sm">❌ Cancelled</p>
-          <h2 className="text-3xl font-bold">{cancelledOrders}</h2>
+        <div className="rounded-2xl bg-red-700 p-5 shadow-lg">
+          <p className="text-sm text-white/80">❌ Cancelled</p>
+          <h2 className="mt-2 text-3xl font-bold">
+            {cancelledOrders}
+          </h2>
         </div>
 
-        <div className="bg-purple-600 rounded-xl p-4">
-          <p className="text-sm">💰 Total Sales</p>
-          <h2 className="text-3xl font-bold">৳ {totalSales}</h2>
+      </div>
+      <div className="mb-6 rounded-2xl bg-slate-900 p-4">
+
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+
+          <input
+            type="text"
+            placeholder="🔍 Search UID / Package / Payment"
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setCurrentPage(1);
+            }}
+            className="rounded-xl border border-slate-700 bg-slate-800 p-3 outline-none focus:border-cyan-500"
+          />
+
+          <select
+            value={statusFilter}
+            onChange={(e) => {
+              setStatusFilter(e.target.value);
+              setCurrentPage(1);
+            }}
+            className="rounded-xl border border-slate-700 bg-slate-800 p-3"
+          >
+            <option value="All">All Status</option>
+            <option value="Waiting">⏳ Waiting</option>
+            <option value="Completed">✅ Completed</option>
+            <option value="Cancelled">❌ Cancelled</option>
+          </select>
+
+          <select
+            value={dateFilter}
+            onChange={(e) => setDateFilter(e.target.value)}
+            className="rounded-xl border border-slate-700 bg-slate-800 p-3"
+          >
+            <option value="All">📅 All Time</option>
+            <option value="Today">Today</option>
+            <option value="Week">Last 7 Days</option>
+            <option value="Month">Last 30 Days</option>
+          </select>
+
+          <button
+            onClick={() => window.print()}
+            className="rounded-xl bg-blue-600 p-3 font-bold hover:bg-blue-700"
+          >
+            🖨 Print
+          </button>
+
+          <button
+            onClick={() => window.location.reload()}
+            className="rounded-xl bg-emerald-600 p-3 font-bold hover:bg-emerald-700"
+          >
+            🔄 Refresh
+          </button>
+
         </div>
 
       </div>
 
-      <div className="flex flex-col md:flex-row gap-4 mb-6">
+      {loading && (
+        <div className="mb-4 rounded-xl bg-yellow-500 p-3 text-center font-bold text-black">
+          Loading Orders...
+        </div>
+      )}
 
-        <input
-          type="text"
-          placeholder="🔍 Search UID / Package / Payment"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="flex-1 rounded-xl bg-slate-800 border border-slate-700 p-3"
-        />
+      <div className="overflow-x-auto rounded-2xl bg-slate-900">
 
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          className="rounded-xl bg-slate-800 border border-slate-700 p-3"
-        >
-          <option value="All">All Status</option>
-          <option value="Waiting">Waiting</option>
-          <option value="Completed">Completed</option>
-          <option value="Cancelled">Cancelled</option>
-        </select>
+        <table className="w-full">
 
-      </div>
-
-      <div className="bg-slate-800 rounded-xl overflow-x-auto">
-
-        <table className="w-full text-left">
-
-          <thead className="bg-slate-700">
+          <thead className="bg-slate-800">
 
             <tr>
-              <th className="p-3">UID</th>
-              <th className="p-3">Package</th>
-              <th className="p-3">Payment</th>
-              <th className="p-3">Price</th>
-              <th className="p-3">Status</th>
-              <th className="p-3">Details</th>
-              <th className="p-3">Action</th>
+
+              <th className="p-3 text-left">UID</th>
+              <th className="p-3 text-left">Package</th>
+              <th className="p-3 text-left">Payment</th>
+              <th className="p-3 text-left">Price</th>
+              <th className="p-3 text-left">Status</th>
+              <th className="p-3 text-left">Details</th>
+              <th className="p-3 text-left">Action</th>
+
             </tr>
 
           </thead>
 
           <tbody>
-            {filteredOrders.map((order: any) => (
+            {currentOrders.map((order) => (
               <tr
                 key={order.id}
-                className="border-b border-slate-700 hover:bg-slate-700/40 transition"
+                className="border-b border-slate-800 hover:bg-slate-800/60"
               >
-                <td className="p-3 font-semibold">
+                <td className="p-3 font-bold">
                   {order.uid}
                 </td>
 
@@ -232,17 +388,17 @@ export default function AdminPage() {
                 </td>
 
                 <td className="p-3">
-                  <span
-                    className={`px-3 py-1 rounded-full text-sm font-bold ${
-                      order.status === "Completed"
-                        ? "bg-green-600"
-                        : order.status === "Waiting"
-                        ? "bg-yellow-500 text-black"
-                        : "bg-red-600"
-                    }`}
+                  <select
+                    value={order.status}
+                    onChange={(e) =>
+                      changeStatus(order.id, e.target.value)
+                    }
+                    className="rounded-lg bg-slate-700 px-3 py-2"
                   >
-                    {order.status}
-                  </span>
+                    <option value="Waiting">⏳ Waiting</option>
+                    <option value="Completed">✅ Completed</option>
+                    <option value="Cancelled">❌ Cancelled</option>
+                  </select>
                 </td>
 
                 <td className="p-3">
@@ -251,33 +407,28 @@ export default function AdminPage() {
                       setSelectedOrder(order);
                       setShowDetails(true);
                     }}
-                    className="bg-cyan-600 hover:bg-cyan-700 px-4 py-2 rounded-lg font-bold"
+                    className="rounded-lg bg-cyan-600 px-4 py-2 font-bold hover:bg-cyan-700"
                   >
                     👁 View
                   </button>
                 </td>
 
                 <td className="p-3">
-                  <select
-                    value={order.status}
-                    onChange={(e) =>
-                      changeStatus(order.id, e.target.value)
-                    }
-                    className="bg-slate-700 border border-slate-600 rounded-lg px-3 py-2"
+                  <button
+                    onClick={() => deleteOrder(order.id)}
+                    className="rounded-lg bg-red-600 px-4 py-2 font-bold hover:bg-red-700"
                   >
-                    <option value="Waiting">⏳ Waiting</option>
-                    <option value="Completed">✅ Completed</option>
-                    <option value="Cancelled">❌ Cancelled</option>
-                  </select>
+                    🗑 Delete
+                  </button>
                 </td>
               </tr>
             ))}
 
-            {filteredOrders.length === 0 && (
+            {currentOrders.length === 0 && (
               <tr>
                 <td
                   colSpan={7}
-                  className="text-center text-gray-400 p-8"
+                  className="p-8 text-center text-gray-400"
                 >
                   No Orders Found
                 </td>
@@ -289,10 +440,34 @@ export default function AdminPage() {
         </table>
 
       </div>
+
+      <div className="mt-6 flex items-center justify-center gap-3">
+
+        <button
+          disabled={currentPage === 1}
+          onClick={() => setCurrentPage((p) => p - 1)}
+          className="rounded-lg bg-slate-700 px-4 py-2 disabled:opacity-40"
+        >
+          ⬅ Previous
+        </button>
+
+        <span className="font-bold">
+          Page {currentPage} / {totalPages}
+        </span>
+
+        <button
+          disabled={currentPage === totalPages}
+          onClick={() => setCurrentPage((p) => p + 1)}
+          className="rounded-lg bg-slate-700 px-4 py-2 disabled:opacity-40"
+        >
+          Next ➡
+        </button>
+
+      </div>
       {showDetails && selectedOrder && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
 
-          <div className="w-full max-w-lg rounded-2xl border border-slate-700 bg-slate-800 p-6">
+          <div className="w-full max-w-lg rounded-2xl bg-slate-900 border border-slate-700 p-6">
 
             <div className="mb-6 flex items-center justify-between">
 
@@ -313,23 +488,17 @@ export default function AdminPage() {
 
               <div className="flex justify-between">
                 <span className="text-gray-400">UID</span>
-                <span className="font-bold">
-                  {selectedOrder.uid}
-                </span>
+                <span className="font-bold">{selectedOrder.uid}</span>
               </div>
 
               <div className="flex justify-between">
                 <span className="text-gray-400">Package</span>
-                <span className="font-bold">
-                  {selectedOrder.package}
-                </span>
+                <span className="font-bold">{selectedOrder.package}</span>
               </div>
 
               <div className="flex justify-between">
                 <span className="text-gray-400">Payment</span>
-                <span className="font-bold">
-                  {selectedOrder.payment}
-                </span>
+                <span className="font-bold">{selectedOrder.payment}</span>
               </div>
 
               <div className="flex justify-between">
@@ -342,24 +511,13 @@ export default function AdminPage() {
               <div className="flex justify-between">
                 <span className="text-gray-400">Status</span>
 
-                <span
-                  className={`px-3 py-1 rounded-full text-sm font-bold ${
-                    selectedOrder.status === "Completed"
-                      ? "bg-green-600"
-                      : selectedOrder.status === "Waiting"
-                      ? "bg-yellow-500 text-black"
-                      : "bg-red-600"
-                  }`}
-                >
+                <span className="rounded-full bg-cyan-600 px-3 py-1 text-sm font-bold">
                   {selectedOrder.status}
                 </span>
-
               </div>
 
               <div className="flex justify-between">
-                <span className="text-gray-400">
-                  Order Time
-                </span>
+                <span className="text-gray-400">Order Time</span>
 
                 <span className="font-bold">
                   {selectedOrder.createdAt
@@ -370,51 +528,47 @@ export default function AdminPage() {
                       ).toLocaleString()
                     : "N/A"}
                 </span>
-
               </div>
 
             </div>
 
-            <div className="grid grid-cols-2 gap-3 mt-6">
+            <div className="mt-6 grid grid-cols-2 gap-3">
+
               <button
-                onClick={() =>
-                  navigator.clipboard.writeText(
-                    String(selectedOrder.uid || "")
-                  )
-                }
+                onClick={() => {
+                  navigator.clipboard.writeText(String(selectedOrder.uid || ""));
+                  showToast("✅ UID Copied");
+                }}
                 className="rounded-lg bg-blue-600 py-3 font-bold hover:bg-blue-700"
               >
                 📋 Copy UID
               </button>
 
               <button
-                onClick={() =>
-                  navigator.clipboard.writeText(
-                    String(selectedOrder.payment || "")
-                  )
-                }
+                onClick={() => {
+                  navigator.clipboard.writeText(String(selectedOrder.payment || ""));
+                  showToast("✅ Payment Copied");
+                }}
                 className="rounded-lg bg-green-600 py-3 font-bold hover:bg-green-700"
               >
                 💳 Copy Payment
               </button>
 
               <button
-                onClick={() =>
-                  navigator.clipboard.writeText(
-                    String(selectedOrder.package || "")
-                  )
-                }
+                onClick={() => {
+                  navigator.clipboard.writeText(String(selectedOrder.package || ""));
+                  showToast("✅ Package Copied");
+                }}
                 className="rounded-lg bg-purple-600 py-3 font-bold hover:bg-purple-700"
               >
                 🎁 Copy Package
               </button>
 
               <button
-                onClick={() =>
-                  navigator.clipboard.writeText(
-                    String(selectedOrder.price || "")
-                  )
-                }
+                onClick={() => {
+                  navigator.clipboard.writeText(String(selectedOrder.price || ""));
+                  showToast("✅ Price Copied");
+                }}
                 className="rounded-lg bg-yellow-500 py-3 font-bold text-black hover:bg-yellow-600"
               >
                 💰 Copy Price
@@ -422,7 +576,7 @@ export default function AdminPage() {
 
             </div>
 
-            <div className="mt-5">
+            <div className="mt-6">
 
               <button
                 onClick={() => setShowDetails(false)}
@@ -437,6 +591,13 @@ export default function AdminPage() {
 
         </div>
       )}
+      <footer className="mt-10 border-t border-slate-800 pt-6 text-center text-sm text-gray-400">
+        <p>© 2026 TOPUP BD Admin Panel v2.0</p>
+        <p className="mt-1">
+          Developed with ❤️ using Next.js + Firebase
+        </p>
+      </footer>
+
     </main>
   );
 }

@@ -11,6 +11,9 @@ import {
   orderBy,
   query,
   updateDoc,
+  getDoc,
+  setDoc,
+  increment,
 } from "firebase/firestore";
 
 import { db } from "@/lib/firebase";
@@ -22,6 +25,7 @@ type Order = {
   payment?: string;
   price?: number | string;
   status?: string;
+  walletAdded?: boolean;
   createdAt?: any;
 };
 
@@ -54,17 +58,43 @@ export default function AdminPage() {
     }, 2500);
   }
 
-  async function changeStatus(id: string, status: string) {
-    try {
-      await updateDoc(doc(db, "orders", id), {
-        status,
-      });
+async function changeStatus(id: string, status: string) {
+  try {
+    await updateDoc(doc(db, "orders", id), {
+      status,
+    });
 
-      showToast("✅ Status Updated");
-    } catch {
-      showToast("❌ Status Update Failed");
+    if (status === "Completed") {
+      const order = orders.find((o) => o.id === id);
+
+      if (order && !order.walletAdded) {
+        const walletRef = doc(db, "wallets", String(order.uid));
+        const walletSnap = await getDoc(walletRef);
+
+        if (!walletSnap.exists()) {
+          await setDoc(walletRef, {
+            uid: String(order.uid),
+            balance: Number(order.price || 0),
+          });
+        } else {
+          await updateDoc(walletRef, {
+            balance: increment(Number(order.price || 0)),
+          });
+        }
+      
+       await updateDoc(doc(db, "orders", id), {
+  walletAdded: true,    
+});
+ 
     }
+  }  
+ 
+  showToast("✅ Status Updated");
+  } catch (error) {
+    console.error(error);
+    showToast("❌ Status Update Failed");
   }
+}
 
   async function deleteOrder(id: string) {
     const ok = confirm("Delete this order?");

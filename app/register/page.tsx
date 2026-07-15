@@ -94,7 +94,7 @@ export default function RegisterPage() {
 
       alert("রেজিস্ট্রেশন সফল হয়েছে!");
 
-      router.push("/dashboard");
+      router.push("/");
     } catch (error: any) {
       alert(error.message);
     } finally {

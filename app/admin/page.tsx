@@ -50,6 +50,8 @@ export default function AdminPage() {
 
   const [toast, setToast] = useState("");
 
+const [walletRequests, setWalletRequests] = useState<any[]>([]);
+
   function showToast(message: string) {
     setToast(message);
 
@@ -148,6 +150,26 @@ async function changeStatus(id: string, status: string) {
 
     return () => unsubscribe();
   }, [loggedIn]);
+ 
+  useEffect(() => {
+  if (!loggedIn) return;
+
+  const q = query(
+    collection(db, "wallet_requests"),
+    orderBy("createdAt", "desc")
+  );
+
+  const unsubscribe = onSnapshot(q, (snapshot) => {
+    setWalletRequests(
+      snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }))
+    );
+  });
+
+  return () => unsubscribe();
+}, [loggedIn]);
 
   const totalOrders = orders.length;
 
@@ -366,7 +388,32 @@ async function changeStatus(id: string, status: string) {
           </button>
 
         </div>
+        <div className="mt-6 rounded-2xl bg-slate-900 p-4">
+  <h2 className="mb-4 text-xl font-bold">
+    💰 Wallet Requests ({walletRequests.length})
+  </h2>
 
+  {walletRequests.length === 0 ? (
+    <p className="text-gray-400">No Wallet Requests</p>
+  ) : (
+    <div className="space-y-3">
+      {walletRequests.map((req: any) => (
+        <div
+          key={req.id}
+          className="rounded-xl border border-slate-700 p-4"
+        >
+          <p>👤 {req.userName}</p>
+          <p>📧 {req.userEmail}</p>
+          <p>💵 ৳{req.amount}</p>
+          <p>💳 {req.method}</p>
+          <p>📱 {req.senderNumber}</p>
+          <p>🧾 {req.trxId}</p>
+          <p>📌 {req.status}</p>
+        </div>
+      ))}
+    </div>
+  )}
+</div>
       </div>
 
       {loading && (

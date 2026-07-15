@@ -14,6 +14,7 @@ import {
   getDoc,
   setDoc,
   increment,
+  runTransaction,
 } from "firebase/firestore";
 
 import { db } from "@/lib/firebase";
@@ -51,6 +52,60 @@ export default function AdminPage() {
   const [toast, setToast] = useState("");
 
 const [walletRequests, setWalletRequests] = useState<any[]>([]);
+async function updateWalletRequestStatus(
+  request: any,
+  status: "Completed" | "Rejected"
+) {
+  try {
+    const requestRef = doc(db, "wallet_requests", request.id);
+
+    if (status === "Completed") {
+      await runTransaction(db, async (transaction) => {
+        const requestSnap = await transaction.get(requestRef);
+
+        if (!requestSnap.exists()) {
+          throw new Error("Request not found");
+        }
+
+        const requestData = requestSnap.data();
+
+        if (requestData.status === "Completed") {
+          throw new Error("Already Completed");
+        }
+
+        const walletRef = doc(db, "wallets", request.userId);
+
+        const walletSnap = await transaction.get(walletRef);
+
+        if (!walletSnap.exists()) {
+          transaction.set(walletRef, {
+            uid: request.userId,
+            balance: Number(request.amount),
+          });
+        } else {
+          transaction.update(walletRef, {
+            balance: increment(Number(request.amount)),
+          });
+        }
+
+        transaction.update(requestRef, {
+          status: "Completed",
+        });
+      });
+
+      showToast("✅ Wallet Added Successfully");
+    } else {
+      await updateDoc(requestRef, {
+        status: "Rejected",
+      });
+
+      showToast("❌ Wallet Request Rejected");
+    }
+  } catch (err) {
+    console.error(err);
+    showToast("⚠️ Request Already Processed");
+  }
+}
 
   function showToast(message: string) {
     setToast(message);
@@ -409,7 +464,32 @@ async function changeStatus(id: string, status: string) {
           <p>📱 {req.senderNumber}</p>
           <p>🧾 {req.trxId}</p>
           <p>📌 {req.status}</p>
-        </div>
+          <div className="mt-4 flex gap-3">
+  <button
+    onClick={() => updateWalletRequestStatus(req, "Completed")}
+    disabled={req.status === "Completed"}
+    className={`rounded-lg px-4 py-2 font-bold ${
+      req.status === "Completed"
+        ? "bg-gray-600 cursor-not-allowed"
+        : "bg-green-600 hover:bg-green-700"
+    }`}
+  >
+    ✅ Complete
+  </button>
+
+  <button
+    onClick={() => updateWalletRequestStatus(req, "Rejected")}
+    disabled={req.status === "Rejected"}
+    className={`rounded-lg px-4 py-2 font-bold ${
+      req.status === "Rejected"
+        ? "bg-gray-600 cursor-not-allowed"
+        : "bg-red-600 hover:bg-red-700"
+    }`}
+  >
+    ❌ Reject
+  </button>
+</div>       
+</div>
       ))}
     </div>
   )}
